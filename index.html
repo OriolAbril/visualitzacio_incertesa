@@ -52,14 +52,15 @@
         </section>
 
         <section data-auto-animate>
-          <h2>Variable aleatòria</h2>
+          <h2>Conceptes estadístics útils per al taller</h2>
+          <h3>Variable aleatòria</h3>
 
           <aside class="notes">
           </aside>
         </section>
 
         <section data-auto-animate>
-          <h2>Variable aleatòria</h2>
+          <h3>Variable aleatòria</h3>
 
           <p><b>Estadística frequentista:</b> probabilitat com a freqüència en repetir el procés infinites vegades</p>
           <p><b>Estadística bayesiana:</b> probabilitat com a seguretat en cadascun dels possibles resultats</p>
@@ -79,7 +80,7 @@
         </section>
 
         <section data-auto-animate>
-          <h2>Variable aleatòria</h2>
+          <h3>Variable aleatòria</h3>
 
           <p><s><b>Estadística frequentista:</b> probabilitat com a freqüència en repetir el procés infinites vegades</s></p>
           <p><s><b>Estadística bayesiana:</b> probabilitat com a seguretat en cadascun dels possibles resultats</s></p>
@@ -91,7 +92,7 @@
         </section>
 
         <section data-auto-animate>
-          <h2>Variable aleatòria</h2>
+          <h3>Variable aleatòria</h3>
           <h4>Matemàticament</h4>
           <ul class="no-marker">
             <li>Funció de distribució (CDF)</li>
@@ -110,7 +111,7 @@
         </section>
 
         <section data-auto-animate>
-          <h2>Variable aleatòria</h2>
+          <h3>Variable aleatòria</h3>
 
           <img src="imatges/variable_aleatoria_mates.png" alt="Gràfics de les funcions de distribució i funcions de densitat/massa de probabilitat per a tres variables aleatòries: una gaussiana, una beta i una poisson"/>
           <aside class="notes">
@@ -148,6 +149,12 @@
           <aside class="notes">
           </aside>
         </section>
+
+        <section data-auto-animate>
+          <img src="imatges/variable_aleatoria_practica.png" alt="Extensió de la imatge mostrada fa dues diapositives. Encara amb les mateixes tres variables aleatòries (gaussiana, beta i poisson) afegim una fila més al gràfic. Als gràfics de les funcions de distribució i funcions de densitat/massa de probabilitat hi sumem el resultat de cinc processos de mostreig independents"/>
+          <aside class="notes">
+          </aside>
+        </section>
         </section>
 
         <section>
@@ -170,7 +177,6 @@
 
         <section data-auto-animate>
           <h2>Visualització de dades</h2>
-          <h3>Cal?</h3>
 
           <img src="imatges/boxplot_issues.png" alt="Gràfic que mostra com quatre mostres clarament diferents tal com es veu als seus histogrames tenen els mateixos quartils i extrems, generant el mateix box plot en tots quatre casos."/>
 
@@ -241,8 +247,6 @@
         </section>
 
         <section data-auto-animate>
-          <h2>Histograma</h2>
-
           <video src="videos/histogram.ca.mp4" controls>
             <p>
               El teu navegador no admet videos HTML. Aquí tens un enllaç
@@ -271,7 +275,7 @@
 az.plot_dist(mostres, kind="hist");
           </code></pre>
 
-          <img src="imatges/hist_base.png" alt="" />
+          <img src="imatges/hist_base.png" alt="" height="550px" />
         </section>
 
         <section data-auto-animate>
@@ -279,7 +283,7 @@ az.plot_dist(mostres, kind="hist");
 az.plot_dist(mostres, kind="hist", hist_kwargs={"bins": 6});
           </code></pre>
 
-          <img src="imatges/hist_low_bins.png" alt="" />
+          <img src="imatges/hist_low_bins.png" alt="" height="550px" />
         </section>
 
         <section data-auto-animate>
@@ -288,7 +292,7 @@ ax = az.plot_dist(mostres, kind="hist", hist_kwargs={"bins": 30})
 ax.set_xticks(np.linspace(-2, 2, 5));
           </code></pre>
 
-          <img src="imatges/hist_high_bins.png" alt="" />
+          <img src="imatges/hist_high_bins.png" alt="" height="550px" />
         </section>
         </section>
 
@@ -319,8 +323,6 @@ ax.set_xticks(np.linspace(-2, 2, 5));
         </section>
 
         <section data-auto-animate>
-          <h2>Estimador nuclear de densitat (KDE)</h2>
-
           <video src="videos/kde.ca.mp4" controls>
             <p>
               El teu navegador no admet videos HTML. Aquí tens un enllaç
@@ -350,7 +352,7 @@ ax.set_xticks(np.linspace(-2, 2, 5));
 az.plot_kde(mostres);
           </code></pre>
 
-          <img src="imatges/kde_base.png" alt="" />
+          <img src="imatges/kde_base.png" alt="" height="550px" />
         </section>
 
         <section data-auto-animate>
@@ -358,7 +360,7 @@ az.plot_kde(mostres);
 az.plot_kde(mostres, bw=0.05);
           </code></pre>
 
-          <img src="imatges/kde_small_bw.png" alt="" />
+          <img src="imatges/kde_small_bw.png" alt="" height="550px" />
         </section>
 
         <section data-auto-animate>
@@ -366,7 +368,7 @@ az.plot_kde(mostres, bw=0.05);
 az.plot_kde(mostres, bw=1.5);
           </code></pre>
 
-          <img src="imatges/kde_big_bw.png" alt="" />
+          <img src="imatges/kde_big_bw.png" alt="" height="550px" />
         </section>
         </section>
 
@@ -428,8 +430,6 @@ az.plot_kde(mostres, bw=1.5);
         </section>
 
         <section data-auto-animate>
-          <h2>Gràfic de punts per quantils</h2>
-
           <video src="videos/dotplot.ca.mp4" controls>
             <p>
               El teu navegador no admet videos HTML. Aquí tens un enllaç
@@ -461,7 +461,7 @@ az.plot_kde(mostres, bw=1.5);
 az.plot_dot(mostres);
           </code></pre>
 
-          <img src="imatges/dot_base.png" alt="" />
+          <img src="imatges/dot_base.png" alt="" height="550px" />
         </section>
 
         <section data-auto-animate>
@@ -469,7 +469,7 @@ az.plot_dot(mostres);
 az.plot_dot(mostres, stackratio=1.3);
           </code></pre>
 
-          <img src="imatges/dot_stackratio.png" alt="" />
+          <img src="imatges/dot_stackratio.png" alt="" height="550px" />
         </section>
 
         <section data-auto-animate>
@@ -477,7 +477,7 @@ az.plot_dot(mostres, stackratio=1.3);
 az.plot_dot(mostres, dotsize=1.2);
           </code></pre>
 
-          <img src="imatges/dot_dotsize.png" alt="" />
+          <img src="imatges/dot_dotsize.png" alt="" height="550px" />
         </section>
 
         <section data-auto-animate>
@@ -485,7 +485,7 @@ az.plot_dot(mostres, dotsize=1.2);
 az.plot_dot(mostres, binwidth=0.1);
           </code></pre>
 
-          <img src="imatges/dot_binwidth.png" alt="" />
+          <img src="imatges/dot_binwidth.png" alt="" height="550px" />
         </section>
         </section>
 
@@ -514,8 +514,6 @@ az.plot_dot(mostres, binwidth=0.1);
         </section>
 
         <section data-auto-animate>
-          <h2>Funció de distribució empírica (ECDF)</h2>
-
           <video src="videos/ecdf.ca.mp4" controls>
             <p>
               El teu navegador no admet videos HTML. Aquí tens un enllaç
@@ -544,7 +542,7 @@ az.plot_dot(mostres, binwidth=0.1);
 az.plot_ecdf(mostres);
           </code></pre>
 
-          <img src="imatges/ecdf_base.png" alt="" />
+          <img src="imatges/ecdf_base.png" alt="" height="550px" />
         </section>
 
         <section data-auto-animate>
@@ -552,7 +550,7 @@ az.plot_ecdf(mostres);
 az.plot_ecdf(mostres, npoints=40);
           </code></pre>
 
-          <img src="imatges/ecdf_npoints.png" alt="" />
+          <img src="imatges/ecdf_npoints.png" alt="" height="550px" />
         </section>
         </section>
 

@@ -1,3 +1,7 @@
 .no-marker {
   list-style: none !important;
 }
+
+:root {
+  --r-main-font-size: 35px;
+}
