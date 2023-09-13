@@ -4,6 +4,7 @@ d'incertesa. Estan disponibles en:
 
 * [Català](https://oriolabril.github.io/visualitzacio_incertesa/ca.html). Presentació i material de suport per al taller a [PyData BCN 2023](https://pybcn.org/events/pydatabcn/pydatabcn_2023/#agenda_section)
 * [Español](https://oriolabril.github.io/visualitzacio_incertesa/es.html). Presentación para [PyData San Luis](https://www.meetup.com/pydata-san-luis/events/295004532/)
+* [English](https://oriolabril.github.io/visualitzacio_incertesa/en.html). Tutorial at [PyData Amsterdam](https://amsterdam.pydata.org/program/)
 
 
 A més, les animacions sobre la computació de cada gràfic no només estan disponibles com a videos mp4

@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="ca">
+  <head>
+    <meta charset="utf-8">
+    <title>Uncertainty visualization with ArviZ | PyData Amsterdam</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link href="https://use.fontawesome.com/releases/v6.4.0/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="reveal.js/dist/theme/solarized.css">
+    <link rel="stylesheet" href="css/reveal-override.css">
+  </head>
+  <body>
+
+    <div class="reveal logo">
+      <div class="slides">
+
+        <section>
+          <h2>Uncertainty visualization with ArviZ</h2>
+          <p>at: <b>PyData Amsterdam 2023</b></p>
+          <p>speaker: <b>Oriol Abril Pla</b></p>
+          <div>
+            <a href="https://oriolabrilpla.cat/en"><i class="fa-solid fa-globe"></i></a>
+            <a href="https://github.com/OriolAbril"><i class="fa-brands fa-github"></i></a>
+            <a href="https://toot.cat/@oriolabril"><i class="fa-brands fa-mastodon"></i></a>
+          </div>
+        </section>
+
+        <section>
+          <h1>About me</h1>
+          <ul class="no-marker">
+            <li>Member of <a href="https://www.pymc.io">PyMC</a> and <a href="https://www.arviz.org">ArviZ</a></li>
+            <li>Open source software maintainer (as a part time paid job!)</li>
+            <li>Bayesian modeling consultant</li>
+            <li>Instructor at <a href="https://www.intuitivebayes.com/">IntuitiveBayes</a></li>
+          </ul>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+        <section>
+          <h2>Statistical concepts relevant to the tutorial</h2>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Statistical concepts relevant to the tutorial</h2>
+          <h3>Random variable</h3>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h3>Random variable</h3>
+
+          <p><b>Frequentist statistics:</b> probability as the frequency of repeating a process endless times</p>
+          <p><b>Bayesian statistics:</b> probability as the confidence in each of the possible results</p>
+
+          <aside class="notes">
+            A random variable is a mathematical object that assigns a numerical value
+            to each of the possibilities of a random experiment or process.
+
+            In frequentism, the probability of each of the values is defined/understood
+            as their relative frequency when repeating an experiment endless times.
+
+            In Bayesian statistics, probability is understood as a quantification of our belifs.
+            It is the confidence we have in each of the outcomes happening.
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h3>Random variable</h3>
+
+          <p><s><b>Frequentist statistics:</b> probability as the frequency of repeating a process endless times</s></p>
+          <p><s><b>Bayesian statistics:</b> probability as the confidence in each of the possible results</s></p>
+
+          <aside class="notes">
+            Everything we'll cover today is independent of the statistical paradigm
+            being used.
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h3>Random variable</h3>
+          <h4>Mathematically</h4>
+          <ul class="no-marker">
+            <li>Cumulative distribution function (CDF)</li>
+            <li>Probability density/mass function (PDF/PMF)</li>
+          </ul>
+          </p>
+
+          <aside class="notes">
+            To formally work with random variables, they are defined as mathematical objects.
+            This is achieved using either of these two functions.
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h3>Random variable</h3>
+
+          <img src="images/random_variable_math.png" alt="Plots of the CDF and PDF/PMF of 3 different random variables: a gaussian, a beta and a poisson"/>
+          <aside class="notes">
+          </aside>
+        </section>
+        </section>
+
+
+        <section>
+        <section data-auto-animate>
+          <h2>Random variables in context</h2>
+
+          <aside class="notes">
+            This tutorial is not about probabilistic modeling nor inference,
+            so we won't cover those at all other than in this slide to
+            give an overview of the motivations for the types of uncertainty
+            visualization we'll cover.
+
+            Probabilistical models are those whose parameters and/or observations
+            are random variables instead of fixed/deterministic values.
+            Therefore, their goal is not to find the value of the parameters or
+            make deterministic predictions but to find the functions that define
+            their distribution.
+
+            In practice however, we'll hardly ever be able to get these functions
+            as symbolic mathematical functions, we'll only be able to get samples
+            generated from these target distributions using methods like MCMC.
+            We won't know the distribution directly though.
+
+            And the same happens in practice. We get samples or observations from
+            the experiments or measurements, but can't know the distributons
+            they come from, hence the need for modeling.
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Random variables in context</h2>
+
+          <img src="images/random_variable_practice.png" alt="Extention of the image shown in a previous slide. To the 3 random variable representations, we add a row with multiple independent sampling realiztions."/>
+        </section>
+
+        <section data-auto-animate>
+          <img src="images/random_variable_practice.png" alt="Extention of the image shown in a previous slide. To the 3 random variable representations, we add a row with multiple independent sampling realiztions."/>
+        </section>
+        </section>
+
+        <section>
+        <section data-auto-animate>
+          <h2>Data visualization</h2>
+          <h3>Is it really necessary?</h3>
+
+          <aside class="notes">
+            Data visualization is a great way to encode a lot of information in little
+            space and also allows us to read it quite eficiently.
+
+            Whether we have experimental results or results of a probabilistic modeling,
+            we'll need to analyze those samples. Get an idea of which values are more
+            probable, their maximum and minimum, symmetry... and already with a dozen
+            of points, it is hard and annoying to do that with the raw data.
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Data visualization</h2>
+
+          <img src="imatges/boxplot_issues.png" alt="Plot showing how 4 clearly different sets of samples generate different histograms but the same boxplots (due to ther quartiles and extremes being the same"/>
+
+          <aside class="notes">
+            And statistical summaries don't fit the bill either.
+            A lot of information is lost when using statistical summaries,
+            and we need multiple summary quantities too to get a gobal idea
+            of the data. To the point that sometimes, even a table with
+            summary statistics becomes cumbersome to read, and as shown in the image,
+            can still be misleading like these 4 box plots.
+
+            We need to aim to represent the whole distribution, not only a summary.
+            Therefore, today we'll see and use visualizations that approximate and
+            encode the pdf/pmf or the cdf of our samples.
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Data visualization</h2>
+
+          <img src="imatges/espai_diseny.png" alt="Diagram of the visualization design space which contains many possibilities. Most of them are a bad fit to our task, some are acceptable and only a handful are good. The left panel illustrates a good design process: the known design space is large, the considered one not as much but it's still quite large and therefore, they contain one of the good solutions. The right panel shows a bad design panel: the known design space is small, and does not contain any good soluttion only an acceptable one which might not even be considered."/>
+
+          <aside class="notes">
+            Data visualization is a hard task, because there are no general solutions.
+            Good visualization solutions are very task and even audience dependent.
+            Today we'll cover 4 different ways to plot distributions from samples
+            with two main goals:
+
+            * Extend your known visualization design space
+            * Deepen your understanding of these 4 plots so you feel comfortable using them in your
+              day to day.
+          </aside>
+        </section>
+        </section>
+
+        <section>
+          <h2>Let's get down to business</h2>
+          <h4>Four ways to visualize samples as random variables</h4>
+          <ul>
+            <li>Histogram</li>
+            <li>Kernel Density Estimation (KDE)</li>
+            <li>Empirical Cumulative Denisity Function (ECDF)</li>
+            <li>Quantile Dotplot</li>
+          </ul>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <!-- ##################  HISTOGRAMA ################# -->
+        <section>
+        <section data-auto-animate>
+          <h2>Histogram</h2>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Histogram</h2>
+
+          <h3>Decisions</h3>
+          <p>Either the number of bins of the binwidth</p>
+
+          <h3>Computation</h3>
+          <ol>
+            <li>Choose the bins</li>
+            <li>Count how many samples fall within each bin</li>
+          </ol>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <video src="videos/histogram.en.mp4" controls>
+            <p>
+              El teu navegador no admet videos HTML. Aquí tens un enllaç
+              per poder-lo descarregar: <a href="videos/histogram.en.mp4">link to the video</a>
+            </p>
+          </video>
+
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Histogram</h2>
+          <h3>How to generate it with ArviZ</h3>
+          <p><a href="https://python.arviz.org/en/stable/api/generated/arviz.plot_dist.html"><code>plot_dist</code></a> with <code>kind="hist"</code>.</p><p>Arguments of interest:</p>
+
+          <p><code>hist_kwargs</code>: dictionary of options o configure the histogram generated with <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hist.html">matplotlib's <code>hist</code> function</a>.</p>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+az.plot_dist(mostres, kind="hist");
+          </code></pre>
+
+          <img src="imatges/hist_base.png" alt="" height="550px" />
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+az.plot_dist(mostres, kind="hist", hist_kwargs={"bins": 6});
+          </code></pre>
+
+          <img src="imatges/hist_low_bins.png" alt="" height="550px" />
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+ax = az.plot_dist(mostres, kind="hist", hist_kwargs={"bins": 30})
+ax.set_xticks(np.linspace(-2, 2, 5));
+          </code></pre>
+
+          <img src="imatges/hist_high_bins.png" alt="" height="550px" />
+        </section>
+        </section>
+
+        <!-- ##################  KDE ################# -->
+        <section>
+        <section data-auto-animate>
+          <h2>Kernel Density Estimation (KDE)</h2>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Kernel Density Estimation (KDE)</h2>
+
+          <h3>Decisions</h3>
+          <p><i>The kernel*</i></p>
+          <p>The bandwidth (or other kernel parameters)</p>
+
+          <h3>Computation</h3>
+          <ol>
+            <li>Choose the bandwidth</li>
+            <li>Compute the contribution of the kernel that corresponds to every point and sum them</li>
+            <li>Compute the border correction (opcional)</li>
+          </ol>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <video src="videos/kde.en.mp4" controls>
+            <p>
+              El teu navegador no admet videos HTML. Aquí tens un enllaç
+              per poder-lo descarregar: <a href="videos/kde.en.mp4">enllaç al video</a>
+            </p>
+          </video>
+
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Kernel density estimation (KDE)</h2>
+          <h3>How to generate it with ArviZ</h3>
+          <p><a href="https://python.arviz.org/en/stable/api/generated/arviz.plot_kde.html"><code>plot_kde</code></a></code>.</p><p>Arguments of interest:</p>
+
+          <p><code>bw</code>: controls the bandwidth. It can be a float to set the value directly or a string indicating one of the algorightms available to compute the bandwidth from he samples</p>
+          <p><code>adaptive</code>: boolean indicanting wheather or not to keep the bandwidth constant or modify it depending on the region each point is in</p>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+az.plot_kde(mostres);
+          </code></pre>
+
+          <img src="imatges/kde_base.png" alt="" height="550px" />
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+az.plot_kde(mostres, bw=0.05);
+          </code></pre>
+
+          <img src="imatges/kde_small_bw.png" alt="" height="550px" />
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+az.plot_kde(mostres, bw=1.5);
+          </code></pre>
+
+          <img src="imatges/kde_big_bw.png" alt="" height="550px" />
+        </section>
+        </section>
+
+        <!-- ##################  dotplot ################# -->
+        <section>
+        <section data-auto-animate>
+          <h2>Quantile dotplot</h2>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Quantile dotplot</h2>
+
+          <h3>Decisions</h3>
+          <p>Number of dots</p>
+          <p><i>Binwidth</i></p>
+
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Quantile dotplot</h2>
+
+          <h3>Computation</h3>
+          <ol>
+            <li>Choose the binwidth and the number of dots</li>
+            <li>Compute as many quantiles as dots chosen. Quantiles are computes on a uniform grid between 0 and 1 (both excluded)</li>
+            <li>Starting from the left:</li>
+            <ul>
+              <li>Check how many quantiles fall within <code>current_quantile + binwidth</code></li>
+              <li>Chose the dots' x as <code>(current_quantile + last_quantile_in_bin) / 2</code>.</li>
+              <li>On that x value, stack as many quantiles as found within the current bin</li>
+              <li>Repeat the process choosing as current quantile the first quantile <em>outside</em> the current bin</li>
+            </ul>
+          </ol>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Quantile dotplot</h2>
+
+          <h3>Computation</h3>
+          <ol start="3">
+            <li>Starting from the left:</li>
+            <ul>
+              <li>Check how many quantiles fall within <code>current_quantile + binwidth</code></li>
+              <li>Chose the dots' x as <code>(current_quantile + last_quantile_in_bin) / 2</code>.</li>
+              <li>On that x value, stack as many quantiles as found within the current bin</li>
+              <li>Repeat the process choosing as current quantile the first quantile <em>outside</em> the current bin</li>
+            </ul>
+          </ol>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <video src="videos/dotplot.en.mp4" controls>
+            <p>
+              El teu navegador no admet videos HTML. Aquí tens un enllaç
+              per poder-lo descarregar: <a href="videos/dotplot.en.mp4">enllaç al video</a>
+            </p>
+          </video>
+
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Quantile dotplot</h2>
+          <h3>How to generate it with ArviZ</h3>
+          <p><a href="https://python.arviz.org/en/stable/api/generated/arviz.plot_dot.html"><code>plot_dot</code></a></code>.</p><p>Arguments of interest:</p>
+
+          <p><code>nquantiles</code>: number of dots in he generated plot</p>
+          <p><code>binwidth</code></p>
+          <p><code>dotsize</code>: ratio between the dot size and the binwidth</p>
+          <p><code>stackratio</code>: vertical distance between stacked dots</p>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+az.plot_dot(mostres);
+          </code></pre>
+
+          <img src="imatges/dot_base.png" alt="" height="550px" />
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+az.plot_dot(mostres, stackratio=1.3);
+          </code></pre>
+
+          <img src="imatges/dot_stackratio.png" alt="" height="550px" />
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+az.plot_dot(mostres, dotsize=1.2);
+          </code></pre>
+
+          <img src="imatges/dot_dotsize.png" alt="" height="550px" />
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+az.plot_dot(mostres, binwidth=0.1);
+          </code></pre>
+
+          <img src="imatges/dot_binwidth.png" alt="" height="550px" />
+        </section>
+        </section>
+
+        <!-- ##################  ECDF ################# -->
+        <section>
+        <section data-auto-animate>
+          <h2>Empirical Cumulative Distribution Function (ECDF)</h2>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Empirical Cumulative Distribution Function (ECDF)</h2>
+
+          <h3>Decisions</h3>
+          <p><i>Cap*</i></p>
+
+          <h3>Computation</h3>
+          <ol>
+            <li>Sort the samples</li>
+            <li>Starting from the left, start plotting the steps, increaing the y in <code>1/num_samples</code> at every sample.</li>
+          </ol>
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <video src="videos/ecdf.en.mp4" controls>
+            <p>
+              El teu navegador no admet videos HTML. Aquí tens un enllaç
+              per poder-lo descarregar: <a href="videos/ecdf.en.mp4">enllaç al video</a>
+            </p>
+          </video>
+
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Empirical Cumulative Distribution Function (ECDF)</h2>
+          <h3>How to generate it with ArviZ</h3>
+          <p><a href="https://python.arviz.org/en/stable/api/generated/arviz.plot_ecdf.html"><code>plot_ecdf</code></a></code>.</p><p>Arguments of interest:</p>
+
+          <p><code>npoints</code>: integer value setting the number of points in the grid where the ECDF will be evaluated.</p>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+az.plot_ecdf(mostres);
+          </code></pre>
+
+          <img src="imatges/ecdf_base.png" alt="" height="550px" />
+        </section>
+
+        <section data-auto-animate>
+          <pre class="python" data-id="code"><code data-noescape>
+az.plot_ecdf(mostres, npoints=40);
+          </code></pre>
+
+          <img src="imatges/ecdf_npoints.png" alt="" height="550px" />
+        </section>
+        </section>
+
+        <section>
+          <img src="images/summary_diagram.png" alt="" />
+        </section>
+
+        <section>
+        <section>
+          <h2>Examples: hands-on work!</h2>
+
+          <p>Download <a href="pydata_data.csv">this .csv file</a>. It has data for some examples we'll discuss right now.</p>
+          <p>You can load it with: <code>df = pd.read_csv("pydata_data.csv")</code>.</p>
+          <p>You will also need to install <a href="https://python.arviz.org/en/stable/getting_started/Installation.html">ArviZ</a>.
+        </section>
+
+        <section>
+          <h2>Waiting for the bus</h2>
+
+          <p style="font-size: 30px">You are waiting for the bus to go back home after work. Your stop is at 21 minutes from home walking.
+          Bus stations were updated recently with better screens, and now instead of showing only a number for when the bus will come,
+          we can show a whole plot with the distribution of the arrival time of the bus.</p>
+
+          <p style="font-size: 30px">Think about how would you make the decision. Then design and create with ArviZ the visualization you'd like
+          to have in bus stops.</p>
+
+          <p style="font-size: 30px">Use the data in the <code>time</code> column and assume once you get on the bus it takes exactly 6 minutes to get home.</p>
+        </section>
+
+        <section>
+          <h2>Will I be able to sit?</h2>
+
+          <p style="font-size: 30px">In the same setting and the previous one, but with extra data available. In addition to the samples from the arrival time distribution
+          we also have samples of how many people will be on the bus when it comes. The bus has 37 seats and a maximum capacity of 136 people.</p>
+        </section>
+
+        <section>
+          <h2><span style="color: dodgerblue">V5</span> o <span style="color: green">V7</span>?</h2>
+
+          <p style="font-size: 30px">Still another different yet similar situation. You are at point 2, wanting to go to point 1, and are able to check the uncertainty visualization
+          of your choice on your smartphone. Think about how you'd do it and generate a visualization to help you choose between the two bus lines.</p>
+
+          <img src="imagenes/eleccion_bus.jpg" alt="" />
+        </section>
+        </section>
+
+        <section>
+          <h2>Uncertainty visualization with ArviZ</h2>
+          <p>at: <b>PyData Amsterdam 2023</b></p>
+          <p>speaker: <b>Oriol Abril Pla</b></p>
+          <div>
+            <a href="https://oriolabrilpla.cat/en"><i class="fa-solid fa-globe"></i></a>
+            <a href="https://github.com/OriolAbril"><i class="fa-brands fa-github"></i></a>
+            <a href="https://toot.cat/@oriolabril"><i class="fa-brands fa-mastodon"></i></a>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="reveal.js/dist/reveal.js"></script>
+    <link rel="stylesheet" href="reveal.js/plugin/highlight/zenburn.css">
+    <script src="reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="reveal.js/plugin/math/math.js"></script>
+    <script src="reveal.js/plugin/notes/notes.js"></script>
+    <script>
+      Reveal.initialize({
+        plugins: [ RevealHighlight, RevealMath, RevealNotes ],
+        hash: false,
+        transition: 'none'
+      });
+    </script>
+
+  </body>
+</html>
